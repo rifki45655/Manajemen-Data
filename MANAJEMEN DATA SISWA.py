@@ -1,88 +1,118 @@
-class Siswa:
-    def __init__(self, nama, usia, nilai):
-        self.nama = nama
-        self.usia = usia
-        self.nilai = nilai
+siswa_list = []
 
-    def __str__(self):
-        return f"Nama: {self.nama} Usia: {self.usia} Nilai Rata-Rata: {self.nilai}"
+def tampilkan_menu():
+    print("\nMenu:")
+    print("1. Tambah Siswa")
+    print("2. Lihat Siswa")
+    print("3. Edit Siswa")
+    print("4. Hapus Siswa")
+    print("5. Keluar")
 
-class Manajemen:
-    def __init__(self):
-        self.daftar_siswa = []
+def tambah_siswa():
+    nama = input("Masukkan Nama: ")
+    while True:
+        try:
+            usia = int(input("Masukkan Usia: "))
+            if usia <=0:
+                raise ValueError("Usia harus bilangan bulat positif")
+            break
+        except ValueError as e:
+            print(f"Error: {e}")
 
-    def tambah_siswa(self):
-        nama = input("Masukkan Nama Siswa: ")
-        usia = int(input("Masukkan Usia Siswa: "))
-        nilai = float(input("Masukkan Nilai Rata-Rata: "))
-        self.daftar_siswa.append(Siswa(nama, usia, nilai))
-        print("Siswa Telah Ditambahkan \n")
+    while True:
+        try:
+            nilai = float(input("Masukkan Nilai Rata-rata: "))
+            if nilai < 0 or nilai > 100:
+                raise ValueError("Nilai rata-rata harus antara 0 dan 100")
+            break
+        except ValueError as e:
+            print(f"Error: {e}")
 
-    def lihat_siswa(self):
-        if not self.daftar_siswa:
-            print("Belum ada data siswa.\n")
-        else:
-            for idx, siswa in enumerate(self.daftar_siswa, start=1):
-                print(f"{idx}. {siswa}")
-            print()
+    siswa = {"nama": nama, "usia": usia, "nilai": nilai}
+    siswa_list.append(siswa)
+    print("[Siswa", nama, "berhasil ditambahkan!]")
 
-    def edit_siswa(self):
-        self.lihat_siswa()
-        indeks = int(input("Masukkan Indeks Siswa Yang Ingin Diedit: ")) - 1
-        if 0 <= indeks < len(self.daftar_siswa):
-            self.daftar_siswa[indeks].nama = input("Masukkan Nama Yang Baru: ")
-            self.daftar_siswa[indeks].usia = int(input("Masukkan Usia Yang Baru: "))
-            self.daftar_siswa[indeks].nilai = float(input("Masukkan Nilai Rata-Rata Yang Baru: "))
-            print("Data Siswa Telah Diperbarui \n")
-        else:
-            print("Indeks Tidak Valid \n")
+def lihat_siswa():
+    if not siswa_list:
+        print("Belum ada data siswa.")
+        return
 
-    def hapus_siswa(self):
-        self.lihat_siswa()
-        indeks = int(input("Masukkan Indeks Siswa Yang Ingin Dihapus: ")) - 1
-        if 0 <= indeks < len(self.daftar_siswa):
-            del self.daftar_siswa[indeks]
-            print("Siswa Berhasil Dihapus \n")
-        else:
-            print("Indeks Tidak Valid \n")
+    print("\nDaftar Siswa:")
+    for i, siswa in enumerate(siswa_list):
+        print(f"{i+1}. Nama: {siswa['nama']}, Usia: {siswa['usia']}, Nilai Rata-rata: {siswa['nilai']}")
 
-    def cari_siswa(self):
-        nama = input("Masukkan Nama Siswa Yang Ingin Dicari: ")
-        hasil = [siswa for siswa in self.daftar_siswa if siswa.nama.lower() == nama.lower()]
-        if hasil:
-            for siswa in hasil:
-                print(siswa)
-        else:
-            print("Siswa Tidak Ditemukan")
-
-    def tampilkan_menu(self):
-        while True:
-            print("\n Menu Manajemen Data Siswa: ")
-            print("1. Tambah Siswa")
-            print("2. Lihat Daftar Siswa")
-            print("3. Edit Data Siswa")
-            print("4. Hapus Siswa")
-            print("5. Cari Siswa")
-            print("6. Keluar")
-            pilihan = input("Pilih Opsi (1-6): ")
-
-            if pilihan == '1':
-                self.tambah_siswa()
-            elif pilihan == '2':
-                self.lihat_siswa()
-            elif pilihan == '3':
-                self.edit_siswa()
-            elif pilihan == '4':
-                self.hapus_siswa()
-            elif pilihan == '5':
-                self.cari_siswa()
-            elif pilihan == '6':
-                print("Terima kasih!")
+def edit_siswa():
+    lihat_siswa()
+    while True:
+        try:
+            indeks = int(input("\nMasukkan indeks siswa yang ingin diedit (atau 0 untuk batal): ")) -1
+            if indeks == -1:
+                break
+            if 0 <= indeks < len(siswa_list):
+                siswa = siswa_list[indeks]
+                siswa['nama'] = input(f"Nama baru ({siswa['nama']}): ") or siswa['nama']
+                while True:
+                    try:
+                        siswa['usia'] = int(input(f"Usia baru ({siswa['usia']}): "))
+                        if siswa['usia'] <= 0:
+                            raise ValueError("Usia harus bilangan bulat positif")
+                        break
+                    except ValueError as e:
+                        print(f"Error: {e}")
+                while True:
+                    try:
+                        siswa['nilai'] = float(input(f"Nilai rata-rata baru ({siswa['nilai']}): "))
+                        if siswa['nilai'] < 0 or siswa['nilai'] > 100:
+                            raise ValueError("Nilai rata-rata harus antara 0 dan 100")
+                        break
+                    except ValueError as e:
+                        print(f"Error: {e}")
+                print("[Data siswa berhasil diubah!]")
                 break
             else:
-                print("Pilihan tidak valid. Silakan coba lagi.\n")
+                print("Indeks tidak valid.")
+        except ValueError:
+            print("Input tidak valid. Masukkan angka.")
 
-# Jalankan program
-if __name__ == "__main__":
-    manajemen = Manajemen()
-    manajemen.tampilkan_menu()
+
+def hapus_siswa():
+    lihat_siswa()
+    while True:
+        try:
+            indeks = int(input("\nMasukkan indeks siswa yang ingin dihapus (atau 0 untuk batal): ")) - 1
+            if indeks == -1:
+                break
+            if 0 <= indeks < len(siswa_list):
+                nama = siswa_list[indeks]['nama']
+                del siswa_list[indeks]
+                print(f"[Siswa {nama} berhasil dihapus!]")
+                break
+            else:
+                print("Indeks tidak valid.")
+        except ValueError:
+            print("Input tidak valid. Masukkan angka.")
+
+
+while True:
+    tampilkan_menu()
+    while True:
+        try:
+            pilihan = int(input("Pilih menu: "))
+            if 1 <= pilihan <= 5:
+                break
+            else:
+                print("Pilihan tidak valid. Silakan masukkan angka antara 1 dan 5.")
+        except ValueError:
+            print("Input tidak valid. Masukkan angka.")
+
+    if pilihan == 1:
+        tambah_siswa()
+    elif pilihan == 2:
+        lihat_siswa()
+    elif pilihan == 3:
+        edit_siswa()
+    elif pilihan == 4:
+        hapus_siswa()
+    elif pilihan == 5:
+        print("Program selesai.")
+        break
